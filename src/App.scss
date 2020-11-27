@@ -1,0 +1,310 @@
+body {
+  background: #222222;
+}
+
+.App {
+  text-align: center;
+}
+
+.town-list, .town-detail-list {
+  text-align: left;
+} 
+
+.town-detail-list table {
+  border-collapse: collapse;
+}
+.town-detail-list thead { 
+  position: sticky; 
+  top: 0;
+}
+.town-detail-list thead th { 
+  box-shadow: inset 1px 1px #cccccc, 0 1px #000;
+}
+
+.town-detail-list thead td { 
+  box-shadow: inset 1px 1px #cccccc, 0 1px #000;
+}
+
+.fav-button { 
+  border: 0;
+  background: transparent;
+  color: white;
+}
+
+.head-groups {
+  text-align: center;
+}
+
+.trenddown {
+  color: green;
+}
+.trendup {
+  color: red;
+}
+
+.date-btn, .nav-btn {
+  border: 0;
+  background: transparent;
+  color: white;
+ }
+ 
+.date-next, .nav-btn-right {
+  float: right;
+}
+.date-back, .nav-btn-left {
+  float: left;
+}
+.details {
+  overflow: hidden;
+  background: white;
+  padding-bottom: 50vh;
+}
+.details h3, .toolbar {
+  background: #222222;
+  color:white;
+}
+
+.details h5 {
+  font-size: .8em;
+}
+
+.toolbar {
+  text-align: center;
+  padding-bottom: 8px;
+}
+
+.details-button, .details-button:hover{
+  border-radius: 3px;
+  border: 2px solid #aaaaaa;
+  background: #1a1919;
+  white-space: nowrap;
+  color: white;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.towns {
+  background: #555555;
+  padding-top: 10px;
+  min-height: 100vh;
+}
+.towns-map {
+  background: black;
+  min-height: 100vh;
+  padding-bottom: 20vh;
+}
+
+.town-row {
+  cursor: pointer;
+  border-radius: 5px;
+  background: black;
+  color: white;
+  padding: 10px;
+  margin: 0 10px 10px 10px
+}
+
+.townbar {
+  padding: 8px;
+}
+
+.town-list {
+  .toolbar {
+    position: sticky;
+    top:0;
+  }
+
+}
+
+.button-toolbar {
+  text-align: right;
+  padding: 0 10px 5px;
+}
+
+.town-details-button {
+  float: right;
+  font-size: 50px;
+  margin-right: 10px;
+  color: white;
+}
+
+table {
+  background: white;
+}
+
+.zhi, .zmi {
+  z-index: 5;
+  opacity: 1;
+  .recharts-default-tooltip, .recharts-tooltip-item-list {
+    background: white;
+    opacity: 1;
+  }
+}
+
+.zmi {
+  z-index: 4;
+}
+
+.nav-btn {
+  height:40px;
+  background: #000000;
+  border: #222222 2px solid
+}
+
+@media (max-width: 768px) {
+  .nav-btn {
+    height:40px;
+    background: #555555;
+    border: #222222 2px solid
+  }
+}
+
+.graph {
+  border-radius: 15px;
+  margin: 8px 0 20px 0;
+  border: 2px solid #777;
+}
+
+.graph-row {
+  padding: 10px;
+  background: black;
+  color: white;
+}
+
+.graph-row h5 {
+  font-size: 1.1em;
+
+}
+
+.graph-row .recharts-responsive-container {
+  color: black;
+}
+
+.graph-details {
+  background: black;
+}
+
+
+.table-dark td {
+  color: white;
+  background: black;
+}
+
+.btn-clear-input {
+  background: white;
+  color: black;
+  border:0;
+  position: relative;
+  left: -37px;
+  height: 30px;
+}
+
+.pt-c {
+  cursor: pointer;
+}
+
+.navbar-dark {
+  background: #222222
+}
+
+.nav-item button {
+  width: 100%
+}
+
+.footer {
+  font-size: 0.7em;
+  color: white;
+  background: black;
+  ul{
+    list-style-type: none;
+  }
+}
+
+.selected-town, .date-range, .instr{
+  color: white;
+  .date-btn {
+    margin: 0 8px;
+    padding: 10px 20px;
+    font-size: 1.4em;
+    background: #333333;
+  }
+}
+
+
+
+@media (min-width: 768px) {
+  .selected-town {
+    margin-top: -70px;
+  }
+}
+
+.map-svg {
+  width: 80vw;
+  max-width: 800px;
+}
+
+.primary-stat {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+button.link {
+  background: transparent;
+  border: 0;
+}
+
+
+.loading {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: black;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.circleG{
+	background-color:rgb(255,255,255);
+	float:left;
+	height:20px;
+  width:20px;
+  animation: bounce_circleG 1.5s infinite normal;
+  border-radius:20px;
+  margin: 5px;
+}
+.circleGWrap {
+  height: 20px;
+  margin-bottom: 25px;
+}
+
+.circleG_1{
+  animation-delay:0.00s;
+}
+
+.circleG_2{
+	animation-delay:0.20s;
+  background: black;
+}
+
+.circleG_3{
+	animation-delay:0.40s;
+  background: black;
+}
+
+@keyframes bounce_circleG{
+	0%{
+    background-color:white;
+  }
+	50%{
+		background-color:rgb(0,0,0);
+	}
+	100%{
+		background-color:white;
+  }
+}
