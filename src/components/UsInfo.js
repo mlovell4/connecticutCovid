@@ -33,6 +33,16 @@ function UsInfo({data, setData}) {
         setData(null);
     }
 
+    const lastRange = {
+        range: `${data[data.length-2].dt.toDateString()} - ${data[data.length-1].dt.toDateString()}`,
+        days: data[data.length-1].dt.getDaysSince(data[data.length-2].dt),
+        deaths: data[data.length-1].death - data[data.length-2].death,
+        positive: data[data.length-1].positive - data[data.length-2].positive,
+        recovered: data[data.length-1].recovered - data[data.length-2].recovered,
+        hospital: data[data.length-1].hospitalizedCurrently - data[data.length-2].hospitalizedCurrently,
+        icu: data[data.length-1].inIcuCurrently - data[data.length-2].inIcuCurrently }
+
+
     const tickFormatter = (number) => {
         if(number > 1000000000){
           return (number/1000000000).toString() + 'B';
@@ -56,6 +66,13 @@ function UsInfo({data, setData}) {
         </div>
         <div className="details graph-details">
             <div className="row graph-row">
+                <div className="col-md-12 text-center">
+                    <h5>{lastRange.days} day period: {lastRange.range}</h5>
+                    <div>Deaths: {lastRange.deaths}</div>
+                    <div>Positive Tests: {lastRange.positive}</div>
+                    <div>Hospitalizations Change: {lastRange.hospital}</div>
+                    <div>ICU Change: {lastRange.icu}</div>
+                </div>
                 <div className="col-md-6">
                     <div className="graph">
                         <h4>Hospitalizations, ICU, &amp; Vent</h4>
