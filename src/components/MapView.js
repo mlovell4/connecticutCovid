@@ -1,12 +1,31 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loading } from './Loading';
 import Navbar from './Navbar';
 
 function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
-
     const [selectedTown, setSelectedTown] = useState(null);
     const [colorType, setColorType] = useState("Caserate");
+    useEffect(()=>{
+        if ( geoData && threeWeekData && !selectedTown) {
+            let worstTown = null;
+            let worstRateChange = -10000;
+            geoData.townMap.forEach((town)=>{
+                let townData = threeWeekData.townDataMap[town.town_no];
+                let rateChange = colorType === "Trend" ?
+                    (townData.days[2][caseRateProperty] - townData.days[1][caseRateProperty]) - (townData.days[1][caseRateProperty] - townData.days[0][caseRateProperty])
+                    :
+                    (townData.days[2][caseRateProperty] - townData.days[0][caseRateProperty]);
+                if ( rateChange > worstRateChange ) {
+                    worstTown = town;
+                    worstRateChange = rateChange;
+                }
+            });
+            setSelectedTown(worstTown);
+        }
+    }, [geoData, threeWeekData]);
+    
+
 
     const caseRateProperty = "towncaserate";
     const caseTotalProperty = "towntotalcases";
@@ -102,7 +121,7 @@ function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
                 <h3>Connecticut Map</h3>
             </div>
             <div className="towns-map">
-            <div className="instr">Touch a Town for Details</div>
+            <h4 className="instr">Two Week Case Rate (per 100K)</h4>
             <div className="date-range d-flex justify-content-center align-items-center">
                 <div className="c1">
                     <button className="date-btn" onClick={handleDateBack} title="Back One Week"><i className="fa fa-angle-double-left" /></button>
@@ -117,53 +136,53 @@ function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
                 </div>
             </div>
             <div>
-                <h4 className="instr">Case Rate (per 100K)</h4>
-                {/* <button className="nav-btn dropdown-toggle" type="button" id="colorDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i className="fa fa-palette" /> {colorType==="Trend"?"Week 1 vs Week 2 Trend":"Case Rate (per 100K)"}
-                </button>
-                <div className="dropdown-menu" aria-labelledby="colorDropdownMenuButton">
-                    <a className="dropdown-item" onClick={handleColorChange} data-name="Caserate" href="./#">Case Rate (per 100K)</a>
-                    <a className="dropdown-item" onClick={handleColorChange} data-name="Trend" href="./#">Week 1 vs Week 2 Trend</a>
-                </div> */}
+                <div className="instr">Touch a Town for Details</div>
             </div>
 
-
-            <svg viewBox={"0 0 " + canWidth + " " + canHeight} className="map-svg">
-                {
-                    geoData.townMap.map((town,ix) => {
-                        return <a href="./#" key={ix} onClick={(e)=>clickTown(e, town)} >
-                                <path strokeWidth={1} stroke={"white"}
-                                        fill={townFill(town)}
-                                        d={pathForTown(town)}/>
-                            </a>
-                    })
-                }
-                {selectedTown && <path strokeWidth={3} stroke={"white"} fill={"transparent"}
-                        d={pathForTown(selectedTown)}/>}
-            </svg>
-            {selectedTown && 
-                <div className="selected-town mb-5">
-                    <h3>{selectedTown.town}</h3>
-                    {selectedTownData && <>
-                            <div>Population: {selectedTownData.population}</div>
-                            {colorType === "Trend" && <>
-                            <div className="primary-stat">Week 2 - Week 1 Case Rate: {(selectedTownData.days[2][caseRateProperty] - selectedTownData.days[1][caseRateProperty])-(selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty])}</div>
-                            <div>Week 1 New Cases: {selectedTownData.days[1][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]}</div>
-                            <div>Week 2 New Cases: {selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[1][caseTotalProperty]}</div>
-                            <div>Week 1 New Cases / 100K: {selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty]}</div>
-                            <div>Week 2 New Cases / 100K: {selectedTownData.days[2][caseRateProperty] - selectedTownData.days[1][caseRateProperty]}</div>
-                            </>}
-                            {colorType === "Caserate" && <>
-                            <div>{selectedTownDays} day period</div>
-                            <div>Total New Cases ({selectedTownData.days[2][caseTotalProperty]} - {selectedTownData.days[0][caseTotalProperty]}):  {selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]}{selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]<0?" (correction)":""}</div>
-                            <div className="primary-stat">New Cases / 100K: {selectedTownData.days[2][caseRateProperty] - selectedTownData.days[0][caseRateProperty]}{selectedTownData.days[2][caseRateProperty] - selectedTownData.days[0][caseRateProperty]<0?" (correction)":""}</div>
-                            <div>Start Cases / 100K: {selectedTownData.days[0][caseRateProperty]}</div>
-                            <div>End Cases / 100K: {selectedTownData.days[2][caseRateProperty]}</div>
-                            </>}
-                        </>
-                    }
+            <div className="row">
+                <div className="col-md-8">
+                    <div className="mapwrap">
+                        <svg viewBox={"0 0 " + canWidth + " " + canHeight} className="map-svg">
+                            {
+                                geoData.townMap.map((town,ix) => {
+                                    return <a href="./#" key={ix} onClick={(e)=>clickTown(e, town)} >
+                                            <path strokeWidth={1} stroke={"white"}
+                                                    fill={townFill(town)}
+                                                    d={pathForTown(town)}/>
+                                        </a>
+                                })
+                            }
+                            {selectedTown && <path strokeWidth={3} stroke={"white"} fill={"transparent"}
+                                    d={pathForTown(selectedTown)}/>}
+                        </svg>
+                    </div>
                 </div>
-            }
+                <div className="col-md-4">
+                    {selectedTown && 
+                        <div className="selected-town mb-5">
+                            <h3>{selectedTown.town}</h3>
+                            {selectedTownData && <>
+                                    <div>Population: {selectedTownData.population}</div>
+                                    {colorType === "Trend" && <>
+                                    <div className="primary-stat">Week 2 - Week 1 Case Rate: {(selectedTownData.days[2][caseRateProperty] - selectedTownData.days[1][caseRateProperty])-(selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty])}</div>
+                                    <div>Week 1 New Cases: {selectedTownData.days[1][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]}</div>
+                                    <div>Week 2 New Cases: {selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[1][caseTotalProperty]}</div>
+                                    <div>Week 1 New Cases / 100K: {selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty]}</div>
+                                    <div>Week 2 New Cases / 100K: {selectedTownData.days[2][caseRateProperty] - selectedTownData.days[1][caseRateProperty]}</div>
+                                    </>}
+                                    {colorType === "Caserate" && <>
+                                    <div>{selectedTownDays} day period</div>
+                                    <div>Total New Cases ({selectedTownData.days[2][caseTotalProperty]} - {selectedTownData.days[0][caseTotalProperty]}):  {selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]}{selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]<0?" (correction)":""}</div>
+                                    <div className="primary-stat">New Cases / 100K: {selectedTownData.days[2][caseRateProperty] - selectedTownData.days[0][caseRateProperty]}{selectedTownData.days[2][caseRateProperty] - selectedTownData.days[0][caseRateProperty]<0?" (correction)":""}</div>
+                                    <div>Start Cases / 100K: {selectedTownData.days[0][caseRateProperty]}</div>
+                                    <div>End Cases / 100K: {selectedTownData.days[2][caseRateProperty]}</div>
+                                    </>}
+                                </>
+                            }
+                        </div>
+                    }
+                    </div>
+                </div>
             </div>
             
         </div>

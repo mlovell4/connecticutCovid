@@ -144,6 +144,11 @@ table {
 
 .zmi {
   z-index: 4;
+  position: relative;
+}
+
+.zmi2 {
+  z-index: 3;
 }
 
 .nav-btn {
@@ -231,17 +236,24 @@ table {
   }
 }
 
-
-
-@media (min-width: 768px) {
-  .selected-town {
-    margin-top: -70px;
-  }
+h4.instr {
+  font-size: 1.2em;
+  padding-top: 10px;
 }
 
 .map-svg {
   width: 80vw;
-  max-width: 800px;
+}
+@media (min-width: 768px) {
+  .selected-town {
+    margin-top: 40px;
+  }
+  .map-svg {
+    width: 100%;
+  }
+  .mapwrap {
+    margin-left: 18px;
+  }
 }
 
 .primary-stat {
@@ -307,4 +319,12 @@ button.link {
 	100%{
 		background-color:white;
   }
+}
+
+.slider {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 20px;
+  margin-bottom: 60px;
+  color: white;
 }
