@@ -71,6 +71,7 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
                         day.date = ageGroupDay.dateupdated;
                         day.dt = dt;
                         day.dateString = `${Config.months[dt.getMonth()]} ${dt.getDate()}`;
+                        day.totals = [];
                         daysMap[ageGroupDay.dateupdated] = day;
                         days.push(day);
                     }
@@ -79,6 +80,11 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
                     day["totalCases_" + suffix] = ageGroupDay.totalcases;
                     day["totalDeaths_" + suffix] = ageGroupDay.totaldeaths;
                     day["totalCaseRate_" + suffix] = ageGroupDay.totalcaserate;
+                    day.totals.push({
+                        totalCases: ageGroupDay.totalcases,
+                        totalDeaths: ageGroupDay.totaldeaths,
+                        totalCaseRate: ageGroupDay.totalcaserate,
+                    })
                     maxDeaths = Math.max(maxDeaths, parseFloat(ageGroupDay.totaldeaths));
                     if (ageGroupDay.totalcaserate) maxCaseRate = Math.max(maxCaseRate, parseFloat(ageGroupDay.totalcaserate));
                     maxCases = Math.max(maxCases, parseFloat(ageGroupDay.totalcases));
@@ -96,25 +102,10 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
             })
         }
     }, [data, ageGroupData, setAgeGroupData, setData]);
+
     if (!data) {
         return <Loading>Loading...</Loading>
     }
-    let maxAgeGroup = 0;
-    data.forEach((day)=>{
-        maxAgeGroup = Math.max(maxAgeGroup, 
-            day.cases_age0_9, 
-            day.cases_age10_19,
-            day.cases_age20_29,
-            day.cases_age30_39,
-            day.cases_age40_49,
-            day.cases_age50_59,
-            day.cases_age60_69,
-            day.cases_age70_79,
-            day.cases_age80_older
-            )
-    });
-
-    maxAgeGroup = ~~((maxAgeGroup + 99)/100) * 100;
 
     const refresh = () => {
         setAgeGroupData(null);
@@ -130,17 +121,56 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
         setRangeLimit({start, end});
     }
 
+    let ageGroupDataMaxDeaths = 0;
+    let ageGroupDataMaxCases = 0;
+    let ageGroupDataMaxCaseRate = 0;
     let rangeLimitedAgeGroupData = ageGroupData;
     let rangeLimitedData = data;
+
     if ( rangeLimit ) {
         rangeLimitedData = data.filter((day)=>{
             return day.dt >= rangeLimit.start && day.dt <= rangeLimit.end
         });
-        const days = ageGroupData.days.filter((day)=>{
-            return day.dt >= rangeLimit.start && day.dt <= rangeLimit.end;
-        });
-        rangeLimitedAgeGroupData = {...ageGroupData, days};
+        if ( ageGroupData ) {
+            const days = ageGroupData.days.filter((day)=>{
+                return day.dt >= rangeLimit.start && day.dt <= rangeLimit.end;
+            });
+            rangeLimitedAgeGroupData = {...ageGroupData, days};
+            days.forEach((ageGroupDay)=>{
+                ageGroupDay.totals.forEach((totals)=> {
+                    ageGroupDataMaxDeaths = Math.max(ageGroupDataMaxDeaths, parseFloat(totals.totalDeaths));
+                    if (totals.totalCaseRate) ageGroupDataMaxCaseRate = Math.max(ageGroupDataMaxCaseRate, parseFloat(totals.totalCaseRate));
+                    ageGroupDataMaxCases = Math.max(ageGroupDataMaxCases, parseFloat(totals.totalCases));
+                });
+            });
+        }
+    } else {
+        if ( ageGroupData ) {
+            ageGroupDataMaxDeaths = ageGroupData.maxDeaths;
+            ageGroupDataMaxCases = ageGroupData.maxCases;
+            ageGroupDataMaxCaseRate = ageGroupData.maxCaseRate;
+        }
     }
+
+
+    let maxAgeGroup = 0;
+    rangeLimitedData.forEach((day)=>{
+        maxAgeGroup = Math.max(maxAgeGroup, 
+            day.cases_age0_9, 
+            day.cases_age10_19,
+            day.cases_age20_29,
+            day.cases_age30_39,
+            day.cases_age40_49,
+            day.cases_age50_59,
+            day.cases_age60_69,
+            day.cases_age70_79,
+            day.cases_age80_older
+            )
+    });
+
+    maxAgeGroup = ~~((maxAgeGroup + 99)/100) * 100;
+
+
 
 
     const lastReportDay = `${data[data.length-1].dt.toDateString()}`;
@@ -174,7 +204,7 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
                         <ResponsiveContainer width={"95%"} height={200}>
                             <AreaChart data={rangeLimitedData} >
                                 <XAxis stroke="white" dataKey="dateString" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, 'auto']} dataKey={(v)=>parseInt(v.hospitalizedcases)}  Id="left"/>
+                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={['auto', 'auto']} dataKey={(v)=>parseInt(v.hospitalizedcases)}  Id="left"/>
                                 <Area strokeWidth="2" name="Total Hospitalization"   Id="left" type="linear" dataKey="hospitalizedcases" stroke={colors[0]} fill={colors[0]} />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
@@ -202,7 +232,7 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
                         <ResponsiveContainer width={"95%"} height={200}>
                             <AreaChart data={rangeLimitedData} >
                                 <XAxis stroke="white" dataKey="dateString" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, 'auto']} dataKey={(v)=>parseInt(v.totalcases)}  Id="left"/>
+                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={['auto', 'auto']} dataKey={(v)=>parseInt(v.totalcases)}  Id="left"/>
                                 <Area strokeWidth="2" name="Total Cases"   Id="left" type="linear" dataKey="totalcases" stroke={colors[1]} fill={colors[1]} />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
@@ -268,7 +298,7 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
                         <ResponsiveContainer width={"95%"} height={200}>
                                 <LineChart data={rangeLimitedAgeGroupData.days} >
                                     <XAxis stroke="white" dataKey="dateString" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                                    <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, ageGroupData.maxCaseRate]}/>
+                                    <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, ageGroupDataMaxCaseRate]}/>
                                     <Line strokeWidth="2" dot={false} stroke={colors[0]} name="Age 0-9" type="linear" dataKey="totalCaseRate_0_9"/>
                                     <Line strokeWidth="2" dot={false} stroke={colors[1]} name="Age 10-19" type="linear" dataKey="totalCaseRate_10_19"/>
                                     <Line strokeWidth="2" dot={false} stroke={colors[2]} name="Age 20-29" type="linear" dataKey="totalCaseRate_20_29"/>
@@ -289,7 +319,7 @@ function StateInfo({data, setData, ageGroupData, setAgeGroupData}) {
                         <ResponsiveContainer width={"95%"} height={200}>
                                 <LineChart data={rangeLimitedAgeGroupData.days} >
                                     <XAxis stroke="white" dataKey="dateString" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                                    <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, ageGroupData.maxDeaths]}/>
+                                    <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, ageGroupDataMaxDeaths]}/>
                                     <Line strokeWidth="2" dot={false} stroke={colors[0]} name="Age 0-9" type="linear" dataKey="totalDeaths_0_9"/>
                                     <Line strokeWidth="2" dot={false} stroke={colors[1]} name="Age 10-19" type="linear" dataKey="totalDeaths_10_19"/>
                                     <Line strokeWidth="2" dot={false} stroke={colors[2]} name="Age 20-29" type="linear" dataKey="totalDeaths_20_29"/>

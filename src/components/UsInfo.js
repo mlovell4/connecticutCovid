@@ -157,12 +157,12 @@ function UsInfo({data, setData}) {
                         </ResponsiveContainer>
                     </div>
                     <div className="graph">
-                        <h4>Daily Case Change</h4>
+                        <h4>Daily Case Change</h4>  
                         <h5>Change in Number of Cases by Day</h5>
                         <ResponsiveContainer width={"95%"} height={200}>
                             <AreaChart data={rangeLimitedData} >
                                 <XAxis stroke="white" dataKey="dateString" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, 'auto']} dataKey={(v)=>v.positiveIncrease}  Id="left"/>
+                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={['auto', 'auto']} dataKey={(v)=>v.positiveIncrease}  Id="left"/>
                                 <Area formatter={valueFormatter} strokeWidth="2" name="Case Change"   Id="left" type="linear" dataKey="positiveIncrease" stroke={colors[4]} fill={colors[4]} />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
                                 <Tooltip />

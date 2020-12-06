@@ -78,7 +78,7 @@ function TownDetails({onShowTownList}) {
                     <ResponsiveContainer width={"95%"} height={200}>
                         <AreaChart data={rangeLimitedData} >
                             <XAxis stroke="white" dataKey="date" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                            <YAxis stroke="white" domain={[0, 'auto']} dataKey={(v)=>parseInt(v.towntotalcases)}  Id="left"/>
+                            <YAxis stroke="white" domain={['auto', 'auto']} dataKey={(v)=>parseInt(v.towntotalcases)}  Id="left"/>
                             <Area strokeWidth="2" name="Total Cases" Id="left" type="natural" dataKey="towntotalcases" stroke="#dd8888" fill="#dd888888" />
                             <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
                             <Tooltip />
@@ -91,7 +91,7 @@ function TownDetails({onShowTownList}) {
                     <ResponsiveContainer width={"95%"} height={200}>
                         <AreaChart data={rangeLimitedData} >
                             <XAxis stroke="white" dataKey="date" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                            <YAxis stroke="white" domain={[0, 'auto']} dataKey={(v)=>parseInt(v.casechange)}  Id="left"/>
+                            <YAxis stroke="white" domain={['auto', 'auto']} dataKey={(v)=>parseInt(v.casechange)}  Id="left"/>
                             <Area strokeWidth="2" name="Case Change" Id="left" type="linear" dataKey="casechange" stroke="#55dd55" fill="#55dd5588" />
                             <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
                             <Tooltip />
@@ -106,7 +106,7 @@ function TownDetails({onShowTownList}) {
                     <ResponsiveContainer width={"95%"} height={200}>
                         <AreaChart data={rangeLimitedData} >
                             <XAxis stroke="white" dataKey="date" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                            <YAxis stroke="white" domain={[0, 'auto']} dataKey={(v)=>parseInt(v.peopletested)}  Id="left"/>
+                            <YAxis stroke="white" domain={['auto', 'auto']} dataKey={(v)=>parseInt(v.peopletested)}  Id="left"/>
                             <Area strokeWidth="2" name="People Tested" Id="left" type="natural" dataKey="peopletested" stroke="#8888dd" fill="#8888dd88" />
                             <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
                             <Tooltip />
@@ -115,11 +115,11 @@ function TownDetails({onShowTownList}) {
                 </div>
                 <div className="graph">
                     <h4>Total Deaths</h4>
-                    <h5>Cumulative (with Corrections in Reported Number)</h5>
+                    <h5>Cumulative (with Corrections)</h5>
                     <ResponsiveContainer width={"95%"} height={200}>
                         <AreaChart data={rangeLimitedData} >
                             <XAxis stroke="white" dataKey="date" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                            <YAxis stroke="white" domain={[0, 'auto']} dataKey={(v)=>parseInt(v.towntotaldeaths)}  Id="left"/>
+                            <YAxis stroke="white" domain={['auto', 'auto']} dataKey={(v)=>parseInt(v.towntotaldeaths)}  Id="left"/>
                             <Area strokeWidth="2" name="Total Deaths" Id="left" type="linear" dataKey="towntotaldeaths" stroke="#aaaa00" fill="#aaaa0088" />\
                             <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
                             <Tooltip />
