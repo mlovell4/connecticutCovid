@@ -117,7 +117,7 @@ function UsInfo({data, setData}) {
                         <ResponsiveContainer width={"95%"} height={200}>
                             <AreaChart data={rangeLimitedData} >
                                 <XAxis stroke="white" dataKey="dateString" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={['auto', 'auto']} dataKey={(v)=>v.totalTestResultsCalc}  Id="left"/>
+                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={[0, 'auto']} dataKey={(v)=>v.totalTestResultsCalc}  Id="left"/>
                                 <Area formatter={valueFormatter} strokeWidth="2" name="Total Test Results" YAxis Id="left" type="linear" dataKey="totalTestResultsCalc" stroke={colors[2]} fill={colors[2]} />
                                 <Area formatter={valueFormatter} strokeWidth="2" name="Negative Results" YAxis Id="left" type="linear" dataKey="negative" stroke={colors[3]} fill={colors[3]} />                                
                                 <Area formatter={valueFormatter} strokeWidth="2" name="Positive Results" YAxis Id="left" type="linear" dataKey="positive" stroke={colors[4]} fill={colors[4]} />                           
@@ -133,7 +133,7 @@ function UsInfo({data, setData}) {
                         <ResponsiveContainer width={"95%"} height={200}>
                             <AreaChart data={rangeLimitedData} >
                                 <XAxis stroke="white" dataKey="dateString" angle={-90} textAnchor="end" orientation="bottom" height={60} />
-                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={['0', 'auto']} dataKey={(v)=>v.death}  Id="left"/>
+                                <YAxis tickFormatter={tickFormatter} stroke="white" domain={['auto', 'auto']} dataKey={(v)=>v.death}  Id="left"/>
                                 <Area formatter={valueFormatter} strokeWidth="2" name="Total Deaths" YAxis Id="left" type="linear" dataKey="death" stroke={colors[3]} fill={colors[3]} />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
