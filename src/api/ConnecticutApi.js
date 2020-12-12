@@ -26,8 +26,7 @@ export const fetchTownAggregateHistoryEndpoint = (range) => {
         //startDate.setDate(startDate.getDate()-1)
         const start = dateToQueryDate(startDate);   
         const end = dateToQueryDate(range.end);
-        const mid = dateToQueryDate(range.mid);
-        const where = "lastupdatedate='"+start+"' OR lastupdatedate='"+mid+"' OR lastupdatedate='"+end+"'";
+        const where = "lastupdatedate='"+start+"' OR lastupdatedate='"+end+"'";
         url = url + `&$where=${where}`;
     }
     return fetch(url, {method:"GET"})
@@ -91,13 +90,12 @@ export function calcDateRange(end, direction) {
     if (end < minEndDate) {
         end = minEndDate;
     }
-    if (end > mostRecentGoodDate()) {
-        end = mostRecentGoodDate();
+    const mostRecent = mostRecentGoodDate();
+    if (end > mostRecent) {
+        end = mostRecent;
     }
     end.setHours(0,0,0,0);
     const start = new Date(end);
-    start.setDate(end.getDate()-14);
-    const mid = new Date(end);
-    mid.setDate(end.getDate()-7);
-    return {start,mid,end}
+    start.setDate(end.getDate()-7);
+    return {start,end}
 }

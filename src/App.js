@@ -22,6 +22,12 @@ Date.prototype.getDaysSince = function(date) {
   return Math.round((this - date) / 1000 / 60 / 60 / 24);
 }
 
+const addDays = (date, days) => {
+  let r = new Date(date);
+  r.setDate(r.getDate() + days);
+  return r;
+}
+
 const TownList = lazy(() => import('./components/TownList'));
 const TownDetails = lazy(() => import('./components/TownDetails'));
 const StateInfo = lazy(() => import('./components/StateInfo'));
@@ -35,19 +41,19 @@ function App() {
   const [townFullData, setTownFullData] = useState({});
   const [stateData, setStateData] = useState(null);
   const [stateAgeGroupData, setStateAgeGroupData] = useState(null);
-  const [threeWeekData, setThreeWeekData] = useState(null);
+  const [recentWeekRange, setRecentWeekRange] = useState(null);
   const [usData, setUsData] = useState(null);
   const [geoData, setGeoData] = useState(null);
   const [dateRangeEnd, setDateRangeEnd] = useState(mostRecentGoodDate());
   useEffect(()=>{
-    const range = calcDateRange(dateRangeEnd,-1);
+    const range = calcDateRange(addDays(dateRangeEnd,1),-1);
     fetchTownAggregateHistoryEndpoint(range).then((data)=>{
-      if (data.length < 500) {
+      if (data.length < 300) {
         handleDateRangeChange(-1);
         return;
       }
       let townDataMap = {};
-      let populations = (threeWeekData && threeWeekData.populations ) || {};
+      let populations = (recentWeekRange && recentWeekRange.populations ) || {};
       data.forEach((townDay)=> {
         let townData = townDataMap[townDay.town_no];
         if (!townData) {
@@ -67,7 +73,7 @@ function App() {
         }
         townData.days.push(townDay);
       });
-      setThreeWeekData({range,townDataMap,populations});
+      setRecentWeekRange({range,townDataMap,populations});
     });
   },[dateRangeEnd]);
   useEffect(()=>{
@@ -124,7 +130,7 @@ function App() {
               <UsInfo data={usData} setData={setUsData} />
             </Route>
             <Route path="/towns-map">
-              <MapView townList={townList} threeWeekData={threeWeekData} geoData={geoData} onDateRangeChange={handleDateRangeChange}/>
+              <MapView townList={townList} recentWeekRange={recentWeekRange} geoData={geoData} onDateRangeChange={handleDateRangeChange}/>
             </Route>
             <Route path="/">
               <StateInfo 

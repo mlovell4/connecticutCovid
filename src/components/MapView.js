@@ -3,19 +3,15 @@ import { useEffect, useState } from 'react';
 import { Loading } from './Loading';
 import Navbar from './Navbar';
 
-function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
+function MapView({townList, recentWeekRange, geoData, onDateRangeChange}) {
     const [selectedTown, setSelectedTown] = useState(null);
-    const [colorType, setColorType] = useState("Caserate");
     useEffect(()=>{
-        if ( geoData && threeWeekData && !selectedTown) {
+        if ( geoData && recentWeekRange && !selectedTown) {
             let worstTown = null;
             let worstRateChange = -10000;
             geoData.townMap.forEach((town)=>{
-                let townData = threeWeekData.townDataMap[town.town_no];
-                let rateChange = colorType === "Trend" ?
-                    (townData.days[2][caseRateProperty] - townData.days[1][caseRateProperty]) - (townData.days[1][caseRateProperty] - townData.days[0][caseRateProperty])
-                    :
-                    (townData.days[2][caseRateProperty] - townData.days[0][caseRateProperty]);
+                let townData = recentWeekRange.townDataMap[town.town_no];
+                let rateChange = (townData.days[1][caseRateProperty] - townData.days[0][caseRateProperty]);
                 if ( rateChange > worstRateChange ) {
                     worstTown = town;
                     worstRateChange = rateChange;
@@ -23,15 +19,15 @@ function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
             });
             setSelectedTown(worstTown);
         }
-    }, [geoData, threeWeekData]);
+    }, [geoData, recentWeekRange, selectedTown]);
     
 
 
     const caseRateProperty = "towncaserate";
     const caseTotalProperty = "towntotalcases";
 
-    if (!geoData || !townList || !threeWeekData) {
-        return <Loading>Loading...</Loading>
+    if (!geoData || !townList || !recentWeekRange) {
+    return <Loading>Loading...</Loading>
     }
 
     const pathForTown = (town) => {
@@ -61,47 +57,27 @@ function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
     }
 
     let maxChange = 0;
-    let rateChangeAverage = 0;
     geoData.townMap.forEach((town)=>{
-        let townData = threeWeekData.townDataMap[town.town_no];
-        let rateChange = colorType === "Trend" ?
-            (townData.days[2][caseRateProperty] - townData.days[1][caseRateProperty]) - (townData.days[1][caseRateProperty] - townData.days[0][caseRateProperty])
-            :
-            (townData.days[2][caseRateProperty] - townData.days[0][caseRateProperty]);
+        let townData = recentWeekRange.townDataMap[town.town_no];
+        let rateChange = (townData.days[1][caseRateProperty] - townData.days[0][caseRateProperty]);
         maxChange = Math.max(rateChange, maxChange);
-        rateChangeAverage += (townData.days[2][caseRateProperty] - townData.days[0][caseRateProperty]);
     });
-    rateChangeAverage = rateChangeAverage / geoData.townMap.length;
 
     const townFill = (town)=> {
-        let townData = threeWeekData.townDataMap[town.town_no];
-        if (colorType === "Trend") {
-            let rateChangeDiff = (townData.days[2][caseRateProperty] - townData.days[1][caseRateProperty]) - (townData.days[1][caseRateProperty] - townData.days[0][caseRateProperty]);
-            let r = rateChangeDiff > 0 && Math.trunc(Math.min(205, 205 * (rateChangeDiff / 35))) || 0;
-            let g = rateChangeDiff < 0 && Math.trunc(Math.min(205, 205 * (-rateChangeDiff / 35))) || 0;
-            let b = Math.trunc(80 - Math.abs(r + g));
-            return `RGB(${r},${g},${b})`
-        } else if (colorType === "Caserate") {
-            let rateChange = townData.days[2][caseRateProperty] - townData.days[0][caseRateProperty];
-            let r = rateChange > 30 && Math.trunc(Math.min(245, 245 * (rateChange / maxChange))) || 0;
-            let g = rateChange < 30 && Math.trunc(Math.min(245, 150 * ((50 - rateChange) / 50))) || 0;
-            let b = 0;//Math.trunc(80 - Math.abs(r + g));
-            return `RGB(${r},${g},${b})`
-        }
+        let townData = recentWeekRange.townDataMap[town.town_no];
+        let rateChange = townData.days[1][caseRateProperty] - townData.days[0][caseRateProperty];
+        let r = rateChange > 30 && Math.trunc(Math.min(245, 245 * (rateChange / maxChange))) || 0;
+        let g = rateChange < 30 && Math.trunc(Math.min(245, 150 * ((50 - rateChange) / 50))) || 0;
+        let b = 0;//Math.trunc(80 - Math.abs(r + g));
+        return `RGB(${r},${g},${b})`
     }
 
-    let selectedTownData = selectedTown && threeWeekData && threeWeekData.townDataMap &&
-                        threeWeekData.townDataMap[selectedTown.town_no] || null;
+    let selectedTownData = selectedTown && recentWeekRange && recentWeekRange.townDataMap &&
+        recentWeekRange.townDataMap[selectedTown.town_no] || null;
     let selectedTownDays = 0;
 
     if ( selectedTownData ) {
-        selectedTownDays = new Date(selectedTownData.days[2].lastupdatedate).getDaysSince(new Date(selectedTownData.days[0].lastupdatedate))
-    }
-
-    const handleColorChange = (e)=>{
-        e.preventDefault();
-        let name = e.target.getAttribute("data-name");
-        setColorType(name);
+        selectedTownDays = new Date(selectedTownData.days[1].lastupdatedate).getDaysSince(new Date(selectedTownData.days[0].lastupdatedate))
     }
 
     const handleDateBack = (e) => {
@@ -121,15 +97,15 @@ function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
                 <h3>Connecticut Map</h3>
             </div>
             <div className="towns-map">
-            <h4 className="instr">Two Week Case Rate (per 100K)</h4>
+            <h4 className="instr">Weekly Case Rate (per 100K)</h4>
             <div className="date-range d-flex justify-content-center align-items-center">
                 <div className="c1">
                     <button className="date-btn" onClick={handleDateBack} title="Back One Week"><i className="fa fa-angle-double-left" /></button>
                 </div>
                 <div className="c2">
-                    <span>{new Date(threeWeekData.townDataMap["1"].days[0].lastupdatedate).toDateString()}</span>
+                    <span>{new Date(recentWeekRange.townDataMap["1"].days[0].lastupdatedate).toDateString()}</span>
                     <span>&nbsp;-&nbsp;</span>
-                    <span>{new Date(threeWeekData.townDataMap["1"].days[2].lastupdatedate).toDateString()}</span> 
+                    <span>{new Date(recentWeekRange.townDataMap["1"].days[1].lastupdatedate).toDateString()}</span> 
                 </div>
                 <div className="c1">
                     <button className="date-btn" onClick={handleDateForward} title="Forward One Week"><i className="fa fa-angle-double-right" /></button>
@@ -163,20 +139,11 @@ function MapView({townList, threeWeekData, geoData, onDateRangeChange}) {
                             <h3>{selectedTown.town}</h3>
                             {selectedTownData && <>
                                     <div>Population: {selectedTownData.population}</div>
-                                    {colorType === "Trend" && <>
-                                    <div className="primary-stat">Week 2 - Week 1 Case Rate: {(selectedTownData.days[2][caseRateProperty] - selectedTownData.days[1][caseRateProperty])-(selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty])}</div>
-                                    <div>Week 1 New Cases: {selectedTownData.days[1][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]}</div>
-                                    <div>Week 2 New Cases: {selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[1][caseTotalProperty]}</div>
-                                    <div>Week 1 New Cases / 100K: {selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty]}</div>
-                                    <div>Week 2 New Cases / 100K: {selectedTownData.days[2][caseRateProperty] - selectedTownData.days[1][caseRateProperty]}</div>
-                                    </>}
-                                    {colorType === "Caserate" && <>
-                                    <div>{selectedTownDays} day period</div>
-                                    <div>Total New Cases ({selectedTownData.days[2][caseTotalProperty]} - {selectedTownData.days[0][caseTotalProperty]}):  {selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]}{selectedTownData.days[2][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]<0?" (correction)":""}</div>
-                                    <div className="primary-stat">New Cases / 100K: {selectedTownData.days[2][caseRateProperty] - selectedTownData.days[0][caseRateProperty]}{selectedTownData.days[2][caseRateProperty] - selectedTownData.days[0][caseRateProperty]<0?" (correction)":""}</div>
+                                    <div>{selectedTownDays} day period starting {new Date(recentWeekRange.townDataMap["1"].days[0].lastupdatedate).toDateString()}</div>
+                                    <div>Total New Cases ({selectedTownData.days[1][caseTotalProperty]} - {selectedTownData.days[0][caseTotalProperty]}):  {selectedTownData.days[1][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]}{selectedTownData.days[1][caseTotalProperty] - selectedTownData.days[0][caseTotalProperty]<0?" (correction)":""}</div>
+                                    <div className="primary-stat">New Cases / 100K: {selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty]}{selectedTownData.days[1][caseRateProperty] - selectedTownData.days[0][caseRateProperty]<0?" (correction)":""}</div>
                                     <div>Start Cases / 100K: {selectedTownData.days[0][caseRateProperty]}</div>
-                                    <div>End Cases / 100K: {selectedTownData.days[2][caseRateProperty]}</div>
-                                    </>}
+                                    <div>End Cases / 100K: {selectedTownData.days[1][caseRateProperty]}</div>
                                 </>
                             }
                         </div>

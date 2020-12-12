@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
-import { fetchTownAggregateList } from '../api/ConnecticutApi';
 import { useHistory } from "react-router-dom";
 import Navbar from './Navbar';
 import { Loading } from './Loading';
 
 
-function TownRow({ix, town, selectTown}) {
+function TownRow({town, selectTown}) {
     return <div className="town-row" onClick={(e)=>selectTown(town.town_no)} >
         <button alt="View Details" className="town-details-button link">
             <i className="fa fa-angle-right" />
@@ -90,7 +88,7 @@ function TownList({townList, townListState, setTownListState}) {
           </div>
           <div className="towns">
             {sortedTownList.map((town,ix)=>{
-                    return <TownRow town={town} ix={ix} selectTown={selectTown} />
+                    return <TownRow town={town} key={ix} selectTown={selectTown} />
                 })
             }
           </div>
