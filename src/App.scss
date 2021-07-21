@@ -133,6 +133,22 @@ table {
   background: white;
 }
 
+.tbl-wrap {
+  padding: 20px;
+}
+
+.tbl {
+}
+
+.tbl > div {
+  border: 1px solid rgb(117, 117, 117);
+}
+
+.tbl-header {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
 .zhi, .zmi {
   z-index: 5;
   opacity: 1;

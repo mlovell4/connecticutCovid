@@ -55,9 +55,9 @@ const Navbar = ({pageName}) => {
                                 <li className={'nav-item ' + (pathname === '/towns-details' ? 'active' : '')}>
                                     <button className="nav-link link" onClick={showTownDetails} href="./#" data-toggle="collapse" data-target=".navbar-collapse.show"><i className="fa fa-table"/> Town Detail Table{pathname !== "/towns-details" && <span className="sr-only">(current)</span>}</button>
                                 </li>
-                                <li className={'nav-item ' + (pathname === '/us' ? 'active' : '')}>
+                                {/* <li className={'nav-item ' + (pathname === '/us' ? 'active' : '')}>
                                     <button className="nav-link link" onClick={showUS} href="./#" data-toggle="collapse" data-target=".navbar-collapse.show"><i className="fa fa-area-chart"/> US Data{pathname !== "/us" && <span className="sr-only">(current)</span>}</button>
-                                </li>
+                                </li> */}
                             </>    
                         }
                     } />

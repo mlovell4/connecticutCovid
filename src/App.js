@@ -114,7 +114,6 @@ function App() {
     <Router basename="/covid19">
       <div className="App"> 
         <div className="main-content">
-
           <Suspense fallback={<Loading>Loading...</Loading>}>
           <Switch>
             <Route path="/town/:town_no">  

@@ -5,9 +5,12 @@ import { CartesianGrid, Tooltip, XAxis, YAxis, AreaChart, Area, ResponsiveContai
 
 import { fetchTownAggregates } from '../api/ConnecticutApi';
 import Config from '../Config';
+import LastFewDays from './LastFewDays';
 import { Loading } from './Loading';
 import Navbar from './Navbar';
 import YearSlider from './slider/slider';
+
+
 
 function TownDetails({onShowTownList}) {
     const [rangeLimit, setRangeLimit] = useState(null);
@@ -42,13 +45,12 @@ function TownDetails({onShowTownList}) {
 
     const lastReportedPeriod = `${data[data.length-1].dt.toDateString()}`;
     const lastReportedPeriodDays = data[data.length-1].dt.getDaysSince(data[data.length-2].dt);
-    const lastReportedPeriodStr = lastReportedPeriodDays === 1 ? "day" : `${lastReportedPeriodDays} days`;
 
     const firstDay = data[0].dt;
     const lastDay = data[data.length-1].dt;
 
     const handleSliderChange = (start, end) => {
-        setRangeLimit({start, end});
+        setRangeLimit({start,end});
     }
 
     let rangeLimitedData = data;
@@ -70,6 +72,9 @@ function TownDetails({onShowTownList}) {
             </div>}
             <div className="col-md-12">
                 <YearSlider firstDay={firstDay} lastDay={lastDay} className="slider" onChange={handleSliderChange}/>
+            </div>
+            <div className="col-md-12">
+                <LastFewDays days={rangeLimitedData} />
             </div>
             <div className="col-md-6">
                 <div className="graph">
